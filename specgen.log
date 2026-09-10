@@ -1,0 +1,27 @@
+2026-09-02 15:41:15 - specgen.service.invoke_entry - INFO - 正在生成开发文档...
+2026-09-02 15:41:17 - specgen.invoke_llm.call_llm - INFO - [ModelCap] qwen3.5:9b 最大上下文： 131072 tokens
+2026-09-02 15:41:17 - specgen.invoke_llm.call_llm - INFO - [Config] num_ctx=131072, num_predict=111411, 预估输入=4923 tokens
+2026-09-02 15:41:17 - specgen.invoke_llm.call_llm - INFO - 开始时间：2026-09-02 15:41:17.279738
+2026-09-02 15:48:16 - specgen.invoke_llm.call_llm - INFO - LLM 相应长度为 13842 个字符
+2026-09-02 15:48:16 - specgen.invoke_llm.call_llm - INFO - 结束时间：2026-09-02 15:48:16.855204
+2026-09-02 15:48:16 - specgen.service.invoke_entry - INFO - 开发文档已经保存至 ./output\development_doc.md
+2026-09-02 15:48:16 - specgen.service.invoke_entry - INFO - 正在生成code spec...
+2026-09-02 15:48:16 - specgen.invoke_llm.call_llm - INFO - [Config] num_ctx=131072, num_predict=111411, 预估输入=10038 tokens
+2026-09-02 15:48:16 - specgen.invoke_llm.call_llm - INFO - 开始时间：2026-09-02 15:48:16.857386
+2026-09-02 15:53:05 - specgen.invoke_llm.call_llm - INFO - LLM 相应长度为 13887 个字符
+2026-09-02 15:53:05 - specgen.invoke_llm.call_llm - INFO - 结束时间：2026-09-02 15:53:05.539141
+2026-09-02 15:53:05 - specgen.service.invoke_entry - INFO - Code spec已经成功保存到了 ./output\code_spec.md
+2026-09-03 15:11:00 - specgen.service.invoke_entry - INFO - 当前requirements长度为：196
+2026-09-03 15:11:00 - specgen.service.invoke_entry - INFO - 正在生成开发文档...
+2026-09-03 15:11:03 - specgen.invoke_llm.call_llm - INFO - [ModelCap] qwen3.5:9b 最大上下文： 131072 tokens
+2026-09-03 15:11:03 - specgen.invoke_llm.call_llm - INFO - [Config] num_ctx=131072, num_predict=111411, 预估输入=4923 tokens
+2026-09-03 15:11:03 - specgen.invoke_llm.call_llm - INFO - 开始时间：2026-09-03 15:11:03.056637
+2026-09-03 15:16:13 - specgen.invoke_llm.call_llm - INFO - LLM 相应长度为 10507 个字符
+2026-09-03 15:16:13 - specgen.invoke_llm.call_llm - INFO - 结束时间：2026-09-03 15:16:13.099532
+2026-09-03 15:16:13 - specgen.service.invoke_entry - INFO - 开发文档已经保存至 ./output\development_doc.md
+2026-09-03 15:16:13 - specgen.service.invoke_entry - INFO - 正在生成code spec...
+2026-09-03 15:16:13 - specgen.invoke_llm.call_llm - INFO - [Config] num_ctx=131072, num_predict=111411, 预估输入=7703 tokens
+2026-09-03 15:16:13 - specgen.invoke_llm.call_llm - INFO - 开始时间：2026-09-03 15:16:13.101284
+2026-09-03 15:20:42 - specgen.invoke_llm.call_llm - INFO - LLM 相应长度为 11929 个字符
+2026-09-03 15:20:42 - specgen.invoke_llm.call_llm - INFO - 结束时间：2026-09-03 15:20:42.833658
+2026-09-03 15:20:42 - specgen.service.invoke_entry - INFO - Code spec已经成功保存到了 ./output\code_spec.md

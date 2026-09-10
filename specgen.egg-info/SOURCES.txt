@@ -1,0 +1,16 @@
+pyproject.toml
+specgen/__init__.py
+specgen/main.py
+specgen.egg-info/PKG-INFO
+specgen.egg-info/SOURCES.txt
+specgen.egg-info/dependency_links.txt
+specgen.egg-info/entry_points.txt
+specgen.egg-info/top_level.txt
+specgen/commons/__init__.py
+specgen/commons/logger.py
+specgen/info_parse/__init__.py
+specgen/info_parse/file_reader.py
+specgen/invoke_llm/__init__.py
+specgen/invoke_llm/call_llm.py
+specgen/service/__init__.py
+specgen/service/invoke_entry.py
