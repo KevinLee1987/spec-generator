@@ -60,6 +60,10 @@ def system_prompt_generator(prompt_type="dev_spec"):
     return prompt
 
 def operator(requirements, files, model, target_dir):
+    # 判断用户是否以文件的形式题需求
+    if os.path.isfile(requirements):
+        with open(requirements, "r", encoding="utf-8") as f:
+            requirements = f.read().strip()
     # 判断requirements长度
     req_len = len(requirements)
     logger.info(f"The current length of the requirements is：{req_len} characters")

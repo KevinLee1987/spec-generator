@@ -10,7 +10,7 @@ def cli():
         prog="specgen",
         description="根据用户需求和用户提供的现有文档/代码文件，生成一份新功能的开发文档和Claude code spec"
     )
-    parser.add_argument("--requirement", "-r", required=True, type=str, help="用户需求描述（文本）")
+    parser.add_argument("--requirement", "-r", required=True, type=str, help="用户需求描述（文本）或包含需求的文件路径")
     parser.add_argument("--files", "-f", nargs="+", default="", help="已有文档/代码文件路径列表，用空格分隔")
     parser.add_argument("--output_dir", "-o", required=True, help="目标存放文件的路径（支持windows和linux文件路径）")
     parser.add_argument("--model", "-m", default="qwen3.5:9b", help="Ollama模型名称，默认qwen3.5:9b")

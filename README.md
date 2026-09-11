@@ -14,8 +14,10 @@
   ```
 
 ## 安装
-在SpecGenerator目录下运行以下命令
 ```bash
+git clone https://github.com/KevinLee1987/SpecGenerator.git
+cd SpecGenerator
+#在SpecGenerator目录下运行以下命令
 pip install .
 ```
 
@@ -31,22 +33,24 @@ specgen -r "<具体需求>" -f <参考文档列表用空格分开> -o <输出目
 specgen -r "实现用户登录功能" -o ./output
 # 结合已有代码生成
 specgen -r "重构排序模块" -f src/sort.py docs/design.md -o ./output
+# 将需求以文件的方式传入
+specgen -r /tmp/requirement.md -f src/sort.py docs/design.md -o ./output
 # 指定模型 + 调试模式
 specgen -r "排序" -f src/sort.py -o ./output -m llama3:8b --debug
 ```
 
 ## 命令参数说明
 
-| 参数               | 说明                   | 默认值 |
-|------------------|----------------------|---|
-| -h,--help        | 帮助信息                 | 无 |
-| -r,--requirement | 需求描述                 | 必填 |
-| -f,--files       | 已有文档/代码文件路径列表，用空格分隔。 | 无 |
-| -o,--output_dir  | 输出目录                 | 必填 |
-| -m,--model       | 模型名称                 | qwen3.5:9b |
-| --debug          | 启用 DEBUG 级别日志        | false |
-| --log_file       | 日志文件路径，如 ./specgen.log | 无 |
-| --version        | 查看版本号                | 无 |
+| 参数              | 说明                     | 默认值 |
+|-----------------|------------------------|---|
+| -h,--help       | 帮助信息                   | 无 |
+| -r,--requirement | 需求描述 (文字或文件路径)         | 必填 |
+| -f,--files      | 已有文档/代码文件路径列表，用空格分隔。   | 无 |
+| -o,--output_dir | 输出目录                   | 必填 |
+| -m,--model      | 模型名称                   | qwen3.5:9b |
+| --debug         | 启用 DEBUG 级别日志          | false |
+| --log_file      | 日志文件路径，如 ./specgen.log | 无 |
+| --version       | 查看版本号                  | 无 |
 > `-f` 支持格式：`.txt` `.md` `.py` `.java` 等纯文本格式。
 > 不支持：`.doc` `.docx` `.pdf` 等二进制格式，请先转换为支持的格式后重试。
 
