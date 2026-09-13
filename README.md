@@ -15,8 +15,8 @@
 
 ## 安装
 ```bash
-git clone https://github.com/KevinLee1987/SpecGenerator.git
-cd SpecGenerator
+git clone https://github.com/KevinLee1987/spec-generator.git
+cd spec-generator
 #在SpecGenerator目录下运行以下命令
 pip install .
 ```
