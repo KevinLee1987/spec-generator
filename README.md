@@ -68,6 +68,6 @@ specgen -r "排序" -f src/sort.py -o ./demo -m llama3:8b --debug
 ```bash
 # 运行以下命令
 specgen -r ./requirement/requirement.txt -f ./existing_files/documentation.txt ./existing_files/LRU_python_way.py -o ./demo
-# 已有的参考文档在./existing_files目录下面
+# 已有的参考文档在和需求文档分别在./existing_files和./requirement目录下面
 # 产出的两篇文档在./demo目录下面
 ```
