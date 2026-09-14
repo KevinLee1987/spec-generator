@@ -30,13 +30,13 @@ specgen -r "<具体需求描述>"/<需求文件> -f <参考文档列表用空格
 ## 快速开始
 ```bash
 # 仅根据需求生成
-specgen -r "实现用户登录功能" -o ./output
+specgen -r "实现用户登录功能" -o ./demo
 # 结合已有代码生成
-specgen -r "重构排序模块" -f src/sort.py docs/design.md -o ./output
+specgen -r "重构排序模块" -f src/sort.py docs/design.md -o ./demo
 # 将需求以文件的方式传入
-specgen -r /tmp/requirement.md -f src/sort.py docs/design.md -o ./output
+specgen -r /tmp/requirement.md -f src/sort.py docs/design.md -o ./demo
 # 指定模型 + 调试模式
-specgen -r "排序" -f src/sort.py -o ./output -m llama3:8b --debug
+specgen -r "排序" -f src/sort.py -o ./demo -m llama3:8b --debug
 ```
 
 ## 命令参数说明
@@ -63,3 +63,11 @@ specgen -r "排序" -f src/sort.py -o ./output -m llama3:8b --debug
 - **PermissionError**: 确保 `-o` 指定的目录有写入权限
 - **Ollama 连接失败**: 确认 `ollama serve` 正在运行，默认地址 http://localhost:11434
 - **模型不存在**: 运行 `ollama pull <模型名>` 拉取模型
+
+## Demo
+```bash
+# 运行以下命令
+specgen -r ./requirement/requirement.txt -f ./existing_files/documentation.txt ./existing_files/LRU_python_way.py -o ./demo
+# 已有的参考文档在./existing_files目录下面
+# 产出的两篇文档在./demo目录下面
+```
