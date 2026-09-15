@@ -1,10 +1,13 @@
 [build-system]
-requires = ["setuptools>=68.0"]
+requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "specgen"
-version = "0.1.0"
+version = "0.1.0b1"
+readme = "README.md"
+authors = [{name = "Kevin Lee"}]
+license = {text = "MIT"}
 description = "从需求描述结合现有文档和代码资料自动生成开发文档和代码规格说明"
 requires-python = ">=3.8"
 dependencies = []
@@ -15,3 +18,4 @@ specgen = "specgen.main:cli"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["specgen*"]
+exclude = ["specgen.tests*"]

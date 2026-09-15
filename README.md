@@ -13,12 +13,17 @@
   ollama pull <模型名称>  # 默认为qwen3.5:9b
   ```
 
-## 安装
+## github 安装
 ```bash
 git clone https://github.com/KevinLee1987/spec-generator.git
 cd spec-generator
 #在SpecGenerator目录下运行以下命令
 pip install .
+```
+
+## pipy 安装命令
+```bash
+pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ spec-generator==0.1.0b1
 ```
 
 ## 使用
