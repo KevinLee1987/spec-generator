@@ -21,7 +21,7 @@ cd spec-generator
 pip install .
 ```
 
-## pipy 安装命令
+## pypi 安装命令
 ```bash
 pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ spec-generator==0.1.0b1
 ```
