@@ -26,36 +26,46 @@ def get_file_content(files):
 def system_prompt_generator(prompt_type="dev_spec"):
     prompt = ""
     if prompt_type == "dev_spec":
-        prompt = """你是一个资深软件工程师。请根据用户需求和提供的现有文件内容，生成一份新功能的开发文档（Markdown格式）。
-        请生成详细的开发文档，包括以下部分（如适用）：
-        1. 概述
-        2. 需求分析
-        3. 功能设计
-        4. 技术方案
-        5. 接口设计
-        6. 数据结构
-        7. 测试计划
-        8. 其他注意事项
-
-        请只输出Markdown格式的文档内容，不要包含任何前缀或后缀解释。
-        请确保开发文档中包含对原始需求的完整映射，以便后续基于本文档生成代码规格时无需回溯原始需求。
+        prompt = """You are a senior software engineer. 
+        Based on the user's requirements and provided existing file contents, 
+        generate a comprehensive development document in Markdown format for a new feature.
+        
+        The document MUST include the following sections (include only if applicable):
+        1. Overview
+        2. Requirements Analysis
+        3. Functional Design
+        4. Technical Approach
+        5. API Design
+        6. Data Structures
+        7. Test Plan
+        8. Additional Considerations
+        
+        CRITICAL INSTRUCTIONS:
+        1. Output ONLY valid Markdown content. Do NOT include any preamble, explanation, or postscript.
+        2. Ensure COMPLETE traceability from original requirements to design elements, 
+        so that downstream code specification generation does NOT require referencing the original requirements again.
+        3. Use precise technical language and avoid ambiguous terms.
         """
     else:
-        prompt = """你是一个技术负责人。请根据用户需求和提供的现有文件内容，生成一份Claude Code可识别的代码规格说明（Markdown格式）。
-        该spec将被Claude Code工具读取，用于自动生成实现代码。请确保spec足够详细，包含以下内容：
+        prompt = """You are a tech lead. Based on the user's requirements and provided existing file contents, 
+        generate a detailed Code Specification document in Markdown format that is explicitly structured for consumption by Claude Code (or similar AI coding agents) to auto-generate implementation code.
 
-        1. 项目背景与目标
-        2. 技术约束（语言、框架、依赖等，基于现有文件推断）
-        3. 现有代码结构概述（基于提供的文件）
-        4. 需要新增/修改的文件列表及每个文件的详细功能描述
-        5. 关键函数/类定义（包括签名、参数、返回值、功能说明）
-        6. 数据模型/数据库设计（如需）
-        7. 错误处理策略
-        8. 测试要求
-        9. 其他实施细节
-
-        请使用清晰的Markdown结构（标题、列表、代码块等），便于Claude Code解析并执行。
-        请只输出Markdown格式的spec内容，不要包含任何前缀或后缀解释。"""
+        The specification MUST include the following sections:
+        1. Project Context & Objectives
+        2. Technical Constraints (language, framework, dependencies — infer from provided files)
+        3. Existing Codebase Structure Summary (based on provided files)
+        4. Files to Create/Modify: list each file with a detailed functional description
+        5. Key Functions/Classes: include signature, parameters, return type, and purpose
+        6. Data Models / Database Schema (if applicable)
+        7. Error Handling Strategy
+        8. Testing Requirements
+        9. Implementation Notes
+        
+        CRITICAL INSTRUCTIONS:
+        1. Output ONLY valid Markdown content. Do NOT include any preamble, explanation, or postscript.
+        2. Use clear hierarchical structure (headings, bullet points, code blocks) optimized for machine parsing.
+        3. Be explicit and unambiguous — assume the consumer is an AI agent with zero contextual memory beyond this document.
+        """
 
     return prompt
 
