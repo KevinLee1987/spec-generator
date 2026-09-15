@@ -23,7 +23,7 @@ pip install .
 
 ## pypi 安装命令
 ```bash
-pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ spec-generator==0.1.0b1
+pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ specgen==0.1.0b1
 ```
 
 ## 使用
