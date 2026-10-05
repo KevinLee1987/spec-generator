@@ -17,6 +17,8 @@ def cli():
     parser.add_argument("--debug", action="store_true", help="启用 DEBUG 级别日志")
     parser.add_argument("--log_file", type=str, default=None, help="日志文件路径，如 ./specgen.log")
     parser.add_argument("--version", action="version", version="specgen 0.1.0")
+    parser.add_argument("--base_url", default=os.environ.get("SPECGEN_BASE_URL", "http://localhost:11434"), help="LLM 服务地址（默认本地 Ollama；使用 DeepSeek 时传 https://api.deepseek.com）")
+    parser.add_argument("--api_key", default=os.environ.get("SPECGEN_API_KEY", None), help="API Key（也可通过环境变量 SPECGEN_API_KEY 设置）")
 
     args = parser.parse_args()
 
@@ -24,7 +26,7 @@ def cli():
     log_path = os.path.join(args.output_dir, "../specgen.log") if not args.log_file else args.log_file
     set_logger(level=log_level, log_file=log_path)
 
-    operator(args.requirement, args.files, args.model, args.output_dir)
+    operator(args.requirement, args.files, args.model, args.output_dir, args.base_url, args.api_key)
 
 
 if __name__ == "__main__":

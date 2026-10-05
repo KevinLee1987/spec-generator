@@ -42,6 +42,11 @@ specgen -r "重构排序模块" -f src/sort.py docs/design.md -o ./demo
 specgen -r /tmp/requirement.md -f src/sort.py docs/design.md -o ./demo
 # 指定模型 + 调试模式
 specgen -r "排序" -f src/sort.py -o ./demo -m llama3:8b --debug
+# 外部接入云端API模型命令（以deepseek为例）
+specgen -r "实现用户登录功能" -o ./output -m deepseek-chat --base_url https://api.deepseek.com --api_key sk-<xxx>
+# 外部接入云端API模型命令 + 环境变量（以deepseek为例）
+export SPECGEN_API_KEY=sk-xxx
+specgen -r "实现用户登录功能" -o ./output -m deepseek-chat --base_url https://api.deepseek.com
 ```
 
 ## 命令参数说明
@@ -76,3 +81,8 @@ specgen -r ./requirement/requirement.txt -f ./existing_files/documentation.txt .
 # 已有的参考文档在和需求文档分别在./existing_files和./requirement目录下面
 # 产出的两篇文档在./demo目录下面
 ```
+
+## 当前版本须知：
+- 本工具目前处于早期 MVP 阶段，旨在验证“结构化 Spec 驱动 AI 编码”的工作流。
+- 模型建议：本地模型仅用于演示和离线环境。为了获得最佳体验，强烈建议配置 DeepSeek / Claude 等 API模型。
+- 当前局限：暂不支持 PDF/Word 解析（已在 v0.2 规划中），暂以 Markdown/纯文本输入为主。

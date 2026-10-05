@@ -12,6 +12,31 @@ MIN_OUTPUT_TOKENS = 1024            # 最低保证输出长度
 OUTPUT_RATIO = 0.75                 # 输出占上下文窗口的比例（预留输入空间）
 MAX_OUTPUT_RATIO = 0.85             # 最多只用 85% 的窗口给输出，留 15% 给输入
 
+# 已知云端模型的上下文窗口（tokens）。
+# 值来自各厂商官方文档，仅用于估算 max_tokens 上限。
+# 未列出的模型使用 DEFAULT_CLOUD_CONTEXT。
+DEFAULT_CLOUD_CONTEXT = 32768
+
+CLOUD_MODEL_CONTEXT = {
+    # DeepSeek
+    "deepseek-chat": 65536,
+    "deepseek-reasoner": 65536,
+    # OpenAI
+    "gpt-4o": 128000,
+    "gpt-4o-mini": 128000,
+    "gpt-4-turbo": 128000,
+    "gpt-3.5-turbo": 16385,
+    # Anthropic（通过 OpenAI 兼容网关时）
+    "claude-sonnet-4-6": 200000,
+    "claude-opus-4-7": 200000,
+    # Moonshot
+    "moonshot-v1-8k": 8192,
+    "moonshot-v1-32k": 32768,
+    "moonshot-v1-128k": 128000,
+    # MiniMax
+    "abab6.5s-chat": 245760,
+}
+
 # 模型能力缓存（进程生命周期内有效，避免重复调用 /api/show）
 _model_capabilities_cache = {}
 
@@ -117,16 +142,47 @@ def compute_safe_options(model, base_url = "http://localhost:11434", prompt_toke
 
     return {"num_ctx": num_ctx, "num_predict": num_predict}
 
-def _do_chat_request(payload, base_url):
-    url = f"{base_url}/api/chat"
-    data = json.dumps(payload).encode("utf-8")
-    req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
+def compute_cloud_max_tokens(model, prompt_tokens_estimate=0):
+    """
+    为 OpenAI 兼容云端 API 计算安全的 max_tokens。
+
+    云端 API 不支持 num_ctx，只能设置 max_tokens。
+    策略：
+      1. 查映射表获得模型上下文窗口；
+      2. 预留输入空间，输出不超过窗口的 50%；
+      3. 保证最小值 MIN_OUTPUT_TOKENS。
+    """
+    ctx = CLOUD_MODEL_CONTEXT.get(model, DEFAULT_CLOUD_CONTEXT)
+
+    # 输出最多占窗口的 50%（云端输入输出共享窗口，留足安全余量）
+    max_output_ratio = 0.5
+    max_tokens = int(ctx * max_output_ratio)
+
+    # 如果已知输入长度，进一步收紧
+    if prompt_tokens_estimate > 0:
+        available = ctx - prompt_tokens_estimate - 256  # 256 为安全余量
+        max_tokens = min(max_tokens, available)
+
+    # 保证上下限
+    max_tokens = max(max_tokens, MIN_OUTPUT_TOKENS)
+
+    logger.info(f"[CloudConfig] model={model}, context_window={ctx}, "
+                f"prompt_tokens≈{prompt_tokens_estimate}, max_tokens={max_tokens}")
+    return max_tokens
+
+def _do_chat_request(url, data, headers, is_ollama=True):
+    req = urllib.request.Request(url, data=data, headers=headers)
     with urllib.request.urlopen(req, timeout=3000) as response:
         response_body = json.loads(response.read().decode("utf-8"))
         logger.debug(f"The response of LLM is {response_body}")
-        content = response_body["message"]["content"]
+        if is_ollama:
+            content = response_body["message"]["content"]
+            done_reason = response_body.get("done_reason", "stop")
+        else:
+            content = response_body["choices"][0]["message"]["content"]
+            finish_reason = response_body["choices"][0].get("finish_reason", "stop")
+            done_reason = "length" if finish_reason == "length" else "stop"
         logger.info(f"The length of the context from LLM is {len(content)} characters")
-        done_reason = response_body.get("done_reason", "stop")
         logger.debug(f"The content of the response body from LLm is {content[:500]}...")
         return content, done_reason
 
@@ -178,38 +234,86 @@ def _estimate_prompt_tokens(messages):
     # 保守估计：1个字符大约0.7个token （中英文混合）
     return int(total_chars * 0.7)
 
-def call_ollama(model, prompt, system_prompt = None, base_url="http://localhost:11434"):
-    """调用ollama API 生成文本, 使用标准库urllib避免额外依赖"""
+def _is_ollama(base_url):
+    """判断base_url是否指向本地ollama服务"""
+    return any(kw in base_url for kw in ("11434", "localhost", "172.0,0,1"))
+
+def validate_llm_config(base_url, model, api_key):
+    """
+    校验 LLM 配置，提前拦截错误组合。返回 （is_ollama, error_msg)。
+    error_msg 非空时表示配置错误，调用方应报错推出。
+    """
+    is_ollams = _is_ollama(base_url)
+    if is_ollams:
+        if api_key:
+            logger.warning(f"[Warning] You provided a api_key, but the base_url looks like local Ollama. The API key will be ignored.")
+            return True, None
+    elif not api_key:
+        return False, (f"The base_url looks like a Cloud API, but no --api_key was provided.\n "
+                       f"Please provide a --api_key or set the SPECGEN_API_KEY environment variable.\n "
+                       f"Example: --base_url https://api.deepseek.com --api_key sk-xxxx")
+    elif ":" in model:
+        return False, (f"base_url is a cloud API, but model '{model}' looks like a local Ollama model name "
+            f"(contains ':').\n"
+            f"  Cloud APIs usually expect names like 'deepseek-chat', 'gpt-4o', 'claude-sonnet-4-6'.\n"
+            f"  Did you forget to change --model? Example: -m deepseek-chat")
+
+    return True, None
+
+def call_ollama(model, prompt, system_prompt = None, base_url="http://localhost:11434", api_key=None):
+    """调用ollama API 或者 OpenAI API 生成文本, 使用标准库urllib避免额外依赖"""
     messages = []
     if system_prompt:
         messages.append({"role": "system", "content": system_prompt})
     messages.append({"role": "user", "content": prompt})
 
-    # 动态计算安全参数
-    prompt_tokens = _estimate_prompt_tokens(messages)
-    safe_opts = compute_safe_options(model, base_url, prompt_tokens)
-    logger.info(f"[Config] num_ctx={safe_opts['num_ctx']}, num_predict={safe_opts['num_predict']}, the estimated input need {prompt_tokens} tokens")
+    is_ollama = _is_ollama(base_url)
 
-    payload = {
-        "model": model,
-        "messages": messages,
-        "stream": False,
-        "think": False,
-        "options": safe_opts
-    }
+    prompt_tokens = _estimate_prompt_tokens(messages)
+    headers = {"Content-Type": "application/json"}
+    if is_ollama:
+        url = f"{base_url}/api/chat"
+        # 动态计算安全参数
+        safe_opts = compute_safe_options(model, base_url, prompt_tokens)
+        logger.info(f"[Config] num_ctx={safe_opts['num_ctx']}, num_predict={safe_opts['num_predict']}, the estimated input need {prompt_tokens} tokens")
+
+        payload = {
+            "model": model,
+            "messages": messages,
+            "stream": False,
+            "think": False,
+            "options": safe_opts
+        }
+    else:
+        logger.info(f"[Config] Using OpenAI-compatible API at {base_url}, model={model}")
+        max_tokens = compute_cloud_max_tokens(model, prompt_tokens)
+        # OpenAI兼容API (Deepseek, OpenAI等）
+        url = f"{base_url.rstrip('/')}/chat/completions"
+        if api_key:
+            headers["Authorization"] = f"Bearer {api_key}"
+        payload = {
+            "model": model,
+            "messages": messages,
+            "stream": False,
+            "max_tokens": max_tokens
+        }
+
+    data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+
     try:
         logger.info(f"Start time：{datetime.now()}")
-        content, done_reason = _do_chat_request(payload, base_url)
+        content, done_reason = _do_chat_request(url, data=data, headers=headers, is_ollama=is_ollama)
         logger.info(f"End time：{datetime.now()}")
-        if done_reason == "length":
+        if is_ollama and done_reason == "length":
             logger.info(f"[AutoFix] The output of the model {model} has been truncated (done_reason=length)，The auto recovery is starting...")
             long_model = _ensure_long_model(model, base_url)
             if long_model is not None:
                 logger.info(f"The long output model has been create successfully, will using the new model to invoke.")
                 payload["model"] = long_model
                 payload["options"] = compute_safe_options(long_model, base_url, prompt_tokens)
+                data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
             logger.info(f"Start to retry：{datetime.now()}")
-            content, done_reason = _do_chat_request(payload, base_url)
+            content, done_reason = _do_chat_request(url, data=data, headers=headers)
             if done_reason == "length":
                 logger.warning(f"[Warn] Even if the {long_model} content is used, it is still truncated. Please check the context limitations of the model itself.")
             logger.info(f"Retry completed：{datetime.now()}")

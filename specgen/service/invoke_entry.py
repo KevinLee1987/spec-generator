@@ -3,7 +3,7 @@ import sys
 
 from specgen.commons.logger import get_logger
 from specgen.info_parse.file_reader import read_file
-from specgen.invoke_llm.call_llm import call_ollama
+from specgen.invoke_llm.call_llm import call_ollama, validate_llm_config
 
 MAX_LENGTH_OF_REQUIREMENT = 1000
 
@@ -69,7 +69,14 @@ def system_prompt_generator(prompt_type="dev_spec"):
 
     return prompt
 
-def operator(requirements, files, model, target_dir):
+def operator(requirements, files, model, target_dir, base_url="http://localhost:11434", api_key=None):
+
+    _, config_error = validate_llm_config(base_url, model, api_key)
+    if config_error:
+        logger.error(f"Configuration error:\n{config_error}")
+        print(f"❌ Configuration error:\n{config_error}", file=sys.stderr)
+        sys.exit(1)
+
     # 判断用户是否以文件的形式题需求
     if os.path.isfile(requirements):
         with open(requirements, "r", encoding="utf-8") as f:
@@ -103,7 +110,7 @@ def operator(requirements, files, model, target_dir):
     system_dev_prompt = system_prompt_generator()
 
     logger.info("The development documentation is generating...")
-    dev_spec  = call_ollama(model, user_prompt ,system_prompt=system_dev_prompt)
+    dev_spec  = call_ollama(model, user_prompt ,system_prompt=system_dev_prompt, base_url=base_url, api_key=api_key)
     if not dev_spec or not dev_spec.strip():
         logger.error("Error：The documentation is empty in model response，please check the model status or prompt")
         sys.exit(1)
@@ -127,7 +134,7 @@ def operator(requirements, files, model, target_dir):
     )
 
     logger.info("The code spec is generating...")
-    code_spec = call_ollama(model, enriched_user_prompt ,system_prompt=system_spec_prompt)
+    code_spec = call_ollama(model, enriched_user_prompt ,system_prompt=system_spec_prompt, base_url=base_url, api_key=api_key)
     if not code_spec or not code_spec.strip():
         logger.error("Error：The documentation is empty in model response，please check the model status or prompt")
         sys.exit(1)

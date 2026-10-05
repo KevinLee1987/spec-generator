@@ -32,13 +32,13 @@ class TestSystemPromptGenerate:
 
     def test_dev_doc_with_required_sections(self):
         result = system_prompt_generator()
-        assert "需求分析" in result
+        assert "comprehensive development" in result
         assert "Markdown" in result
 
     def test_code_spec_with_required_sections(self):
         result = system_prompt_generator("code_spec")
         assert "Claude Code" in result
-        assert "测试要求" in result
+        assert "tech lead" in result
 
 class TestOperator:
 
