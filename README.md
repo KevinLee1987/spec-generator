@@ -7,7 +7,7 @@
 
 ## 前置条件
 - Python 3.8+
-- Ollama 本地运行（或兼容的 LLM 服务）
+- Ollama 本地运行（或兼容的 LLM 服务）或者使用cloud API模型（需提供base_url, api_key)
   - 已安装并运行，且已拉取所需模型：
   ```bash
   ollama pull <模型名称>  # 默认为qwen3.5:9b
