@@ -13,14 +13,14 @@
   ollama pull <模型名称>  # 默认为qwen3.5:9b
   ```
 
-## github 安装
+## 安装
 ```bash
 pip install specer
 ```
 
 ## pypi 安装命令
 ```bash
-pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ specer==0.1.0b1
+pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ specer==<版本号例如：0.1.0b1>
 ```
 
 ## 使用
