@@ -183,7 +183,7 @@ def _do_chat_request(url, data, headers, is_ollama=True):
             finish_reason = response_body["choices"][0].get("finish_reason", "stop")
             done_reason = "length" if finish_reason == "length" else "stop"
         logger.info(f"The length of the context from LLM is {len(content)} characters")
-        logger.debug(f"The content of the response body from LLm is {content[:500]}...")
+        logger.debug(f"The content of the response body from LLm is {content}...")
         return content, done_reason
 
 def _ensure_long_model(model, base_url):
