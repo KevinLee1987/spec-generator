@@ -1,4 +1,4 @@
-# SpecGenerator v0.1.0
+# specererator v0.1.0
 
 ## 功能
 根据用户需求及已有文档/代码文件，自动生成两份产物：
@@ -15,38 +15,35 @@
 
 ## github 安装
 ```bash
-git clone https://github.com/KevinLee1987/spec-generator.git
-cd spec-generator
-#在SpecGenerator目录下运行以下命令
-pip install .
+pip install specer
 ```
 
 ## pypi 安装命令
 ```bash
-pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ specgen==0.1.0b1
+pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ specer==0.1.0b1
 ```
 
 ## 使用
-安装成功之后就可使用`specgen`命令
+安装成功之后就可使用`specer`命令
 ```bash
-specgen -r "<具体需求描述>"/<需求文件> -f <参考文档列表用空格分开> -o <输出目录>
+specer -r "<具体需求描述>"/<需求文件> -f <参考文档列表用空格分开> -o <输出目录>
 ```
 
 ## 快速开始
 ```bash
 # 仅根据需求生成
-specgen -r "实现用户登录功能" -o ./demo
+specer -r "实现用户登录功能" -o ./demo
 # 结合已有代码生成
-specgen -r "重构排序模块" -f src/sort.py docs/design.md -o ./demo
+specer -r "重构排序模块" -f src/sort.py docs/design.md -o ./demo
 # 将需求以文件的方式传入
-specgen -r /tmp/requirement.md -f src/sort.py docs/design.md -o ./demo
+specer -r /tmp/requirement.md -f src/sort.py docs/design.md -o ./demo
 # 指定模型 + 调试模式
-specgen -r "排序" -f src/sort.py -o ./demo -m llama3:8b --debug
+specer -r "排序" -f src/sort.py -o ./demo -m llama3:8b --debug
 # 外部接入云端API模型命令（以deepseek为例）
-specgen -r "实现用户登录功能" -o ./output -m deepseek-chat --base_url https://api.deepseek.com --api_key sk-<xxx>
+specer -r "实现用户登录功能" -o ./output -m deepseek-chat --base_url https://api.deepseek.com --api_key sk-<xxx>
 # 外部接入云端API模型命令 + 环境变量（以deepseek为例）
-export SPECGEN_API_KEY=sk-xxx
-specgen -r "实现用户登录功能" -o ./output -m deepseek-chat --base_url https://api.deepseek.com
+export specer_API_KEY=sk-xxx
+specer -r "实现用户登录功能" -o ./output -m deepseek-chat --base_url https://api.deepseek.com
 ```
 
 ## 命令参数说明
@@ -59,7 +56,7 @@ specgen -r "实现用户登录功能" -o ./output -m deepseek-chat --base_url ht
 | -o,--output_dir | 输出目录                   | 必填 |
 | -m,--model      | 模型名称                   | qwen3.5:9b |
 | --debug         | 启用 DEBUG 级别日志          | false |
-| --log_file      | 日志文件路径，如 ./specgen.log | 无 |
+| --log_file      | 日志文件路径，如 ./specer.log | 无 |
 | --version       | 查看版本号                  | 无 |
 > `-f` 支持格式：`.txt` `.md` `.py` `.java` 等纯文本格式。
 > 不支持：`.doc` `.docx` `.pdf` 等二进制格式，请先转换为支持的格式后重试。
@@ -77,7 +74,7 @@ specgen -r "实现用户登录功能" -o ./output -m deepseek-chat --base_url ht
 ## Demo
 ```bash
 # 运行以下命令
-specgen -r ./requirement/requirement.txt -f ./existing_files/documentation.txt ./existing_files/LRU_python_way.py -o ./demo
+specer -r ./requirement/requirement.txt -f ./existing_files/documentation.txt ./existing_files/LRU_python_way.py -o ./demo
 # 已有的参考文档在和需求文档分别在./existing_files和./requirement目录下面
 # 产出的两篇文档在./demo目录下面
 ```
