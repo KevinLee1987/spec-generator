@@ -1,4 +1,4 @@
-# specererator
+# specer
 
 ## 功能
 根据用户需求及已有文档/代码文件，自动生成两份产物：
@@ -20,7 +20,7 @@ pip install specer
 
 ## pypi 安装命令
 ```bash
-pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ specer==<版本号例如：0.1.0b1>
+pip install specer==<版本号例如：0.1.0b5> --no-cache-dir -i https://pypi.org/simple/
 ```
 
 ## 使用
@@ -42,7 +42,7 @@ specer -r "排序" -f src/sort.py -o ./demo -m llama3:8b --debug
 # 外部接入云端API模型命令（以deepseek为例）
 specer -r "实现用户登录功能" -o ./output -m deepseek-chat --base_url https://api.deepseek.com --api_key sk-<xxx>
 # 外部接入云端API模型命令 + 环境变量（以deepseek为例）
-export specer_API_KEY=sk-xxx
+export SPECER_API_KEY=sk-xxx
 specer -r "实现用户登录功能" -o ./output -m deepseek-chat --base_url https://api.deepseek.com
 ```
 
