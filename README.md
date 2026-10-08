@@ -20,7 +20,7 @@ pip install specer
 
 ## pypi 安装命令
 ```bash
-pip install specer==<版本号例如：0.1.0b5> --no-cache-dir -i https://pypi.org/simple/
+pip install specer==<版本号例如：0.1.0b6> --no-cache-dir -i https://pypi.org/simple/
 ```
 
 ## 使用
