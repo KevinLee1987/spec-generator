@@ -1,4 +1,4 @@
-# specererator v0.1.0
+# specererator
 
 ## 功能
 根据用户需求及已有文档/代码文件，自动生成两份产物：
